@@ -1,5 +1,5 @@
 #!python3
-'''vCMD - Velocity API command line interface'''
+'''The main file for the VCMD command line interface'''
 # MIT License
 #
 # Copyright (c) 2023 Max Kofler
@@ -22,43 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import sys
-#import readline
-import getpass
-from cmd import Cmd
-from .v_api import VAPI
+from src.vcmd import VCMD
 
-print("VCMD 0.1 - Velocity API command line interface")
-print("Copyright (c) 2023 Max Kofler (https://maxkofler.eu)")
-print()
-
-if len(sys.argv) < 3:
-    print("Need the hostname and port")
-    exit(-1)
-
-class VCMD(Cmd):
-    '''The main command class'''
-
-    prompt = "vCMD> "
-
-    def __init__(self):
-        super().__init__()
-        self._api = VAPI(sys.argv[1], sys.argv[2])
-
-    def do_exit(self, _):
-        '''Exit this application'''
-        return True
-
-    def do_auth(self, arg):
-        '''Authenticate to a Velocity instance'''
-        args = arg.split()
-
-        if len(args) < 1:
-            print("1 argument required: <username>")
-            return
-
-        password = getpass.getpass("Password: ")
-
-        self._api.auth(args[0], password)
-
-    do_EOF = do_exit
+VCMD().cmdloop()
