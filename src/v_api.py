@@ -67,3 +67,4 @@ class VAPI:
             return False
 
         self._authkey = VAPI.Authkey(response.json["authkey"], response.json["expires"])
+        return True
