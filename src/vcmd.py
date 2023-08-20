@@ -23,7 +23,6 @@
 # SOFTWARE.
 
 import sys
-#import readline
 import getpass
 from cmd import Cmd
 from .v_api import VAPI
@@ -59,6 +58,18 @@ class VCMD(Cmd):
 
         password = getpass.getpass("Password: ")
 
-        self._api.auth(args[0], password)
+        if not self._api.auth(args[0], password):
+            print("Failed to authenticate")
+
+    def do_reauth(self, _):
+        '''Reauthenticate the current session'''
+
+        if not self._api.reauth():
+            print("Failed to reauthenticate")
+
+    def do_deauth(self, _):
+        '''Deauthenticate this session (log off)'''
+
+        self._api.deauth()
 
     do_EOF = do_exit
