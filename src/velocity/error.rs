@@ -2,6 +2,8 @@
 use std::{error::Error, fmt::Display};
 
 use serde::Deserialize;
+use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::JsValue;
 
 /// An enumeration of all possible errors that can result from this API
 #[derive(Debug)]
@@ -68,5 +70,29 @@ impl Error for VelocityError {
 
     fn cause(&self) -> Option<&dyn Error> {
         self.source()
+    }
+}
+
+impl From<VelocityError> for JsValue {
+    fn from(value: VelocityError) -> Self {
+        JSVelocityError {
+            message: value.to_string(),
+        }
+        .into()
+    }
+}
+
+#[wasm_bindgen]
+#[allow(dead_code)]
+struct JSVelocityError {
+    message: String,
+}
+
+#[wasm_bindgen]
+#[allow(dead_code)]
+impl JSVelocityError {
+    #[wasm_bindgen(getter)]
+    pub fn message(&self) -> String {
+        self.message.clone()
     }
 }

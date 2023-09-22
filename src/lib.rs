@@ -18,21 +18,26 @@ mod velocity;
 use error::*;
 pub use velocity::{authkey::*, *};
 
+use wasm_bindgen::prelude::wasm_bindgen;
+
 /// This struct is the main workhorse of this API client, all requests and functions go through
 /// this struct and its methods
 #[derive(Debug)]
+#[wasm_bindgen]
 pub struct Velocity {
     base_url: String,
     http_client: reqwest::Client,
     authkey: Option<Authkey>,
 }
 
+#[wasm_bindgen]
 impl Velocity {
     /// Creates a new and authenticated `Velocity` instance. If the authentication fails, this will error out
     /// # Arguments
     /// * `base_url` - The base url to route all requests to
     /// * `username` - The username needed for authentication
     /// * `password` - The passwrod needed for authentication
+    #[wasm_bindgen(constructor)]
     pub async fn new(
         base_url: &str,
         username: &str,
