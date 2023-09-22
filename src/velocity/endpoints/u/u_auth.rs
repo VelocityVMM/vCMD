@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Authkey, Velocity, VelocityError};
 
-impl<'a> Velocity<'a> {
+impl Velocity {
     /// Authenticate this Velocity instance
     /// # Arguments
     /// * `username` - The username for the user

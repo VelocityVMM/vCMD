@@ -17,7 +17,7 @@ pub struct JSONResponse<T: DeserializeOwned> {
     pub response: T,
 }
 
-impl<'a> Velocity<'a> {
+impl Velocity {
     /// Generates a full URL from the internal base url and the endpoint
     fn url(&self, endpoint: &str) -> String {
         format!("{}/{}", self.base_url, endpoint)

@@ -21,13 +21,13 @@ pub use velocity::{authkey::*, *};
 /// This struct is the main workhorse of this API client, all requests and functions go through
 /// this struct and its methods
 #[derive(Debug)]
-pub struct Velocity<'a> {
-    base_url: &'a str,
+pub struct Velocity {
+    base_url: String,
     http_client: reqwest::Client,
     authkey: Option<Authkey>,
 }
 
-impl<'a> Velocity<'a> {
+impl Velocity {
     /// Creates a new and authenticated `Velocity` instance. If the authentication fails, this will error out
     /// # Arguments
     /// * `base_url` - The base url to route all requests to
@@ -40,7 +40,7 @@ impl<'a> Velocity<'a> {
     ) -> Result<Velocity, VelocityError> {
         let http_client = reqwest::Client::new();
         let mut v = Velocity {
-            base_url,
+            base_url: base_url.to_owned(),
             http_client,
             authkey: Default::default(),
         };
@@ -51,7 +51,7 @@ impl<'a> Velocity<'a> {
     }
 }
 
-impl<'a> Drop for Velocity<'a> {
+impl Drop for Velocity {
     /// Tries to deauthenticate this client before dropping it
     fn drop(&mut self) {
         if self.authkey.is_some() {

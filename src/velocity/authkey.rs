@@ -31,7 +31,7 @@ impl Authkey {
     }
 }
 
-impl<'a> Velocity<'a> {
+impl Velocity {
     /// Tries to retrieve the authkey from this instance. If it doesn't exist, this will error
     /// with a `ClientError::NotAuthenticated`
     pub fn get_authkey(&self) -> Result<Authkey, VelocityError> {
