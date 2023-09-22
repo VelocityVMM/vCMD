@@ -30,7 +30,7 @@ impl<'a> Velocity<'a> {
     /// * `request` - The request structure to provide to the API
     /// # Returns
     /// A `JSONResponse` struct containing the status code and the expected response structure
-    pub fn request_json<REQUEST: Serialize, RESPONSE: DeserializeOwned>(
+    pub async fn request_json<REQUEST: Serialize, RESPONSE: DeserializeOwned>(
         &self,
         method: reqwest::Method,
         endpoint: &str,
@@ -40,13 +40,14 @@ impl<'a> Velocity<'a> {
             .http_client
             .request(method, self.url(endpoint))
             .json(&request)
-            .send()?;
+            .send()
+            .await?;
 
         let status = r_response.status();
 
         match status {
             StatusCode::OK => {
-                let response = r_response.json::<RESPONSE>()?;
+                let response = r_response.json::<RESPONSE>().await?;
 
                 Ok(JSONResponse { status, response })
             }
@@ -57,7 +58,7 @@ impl<'a> Velocity<'a> {
                 }
 
                 let status: u32 = r_response.status().as_u16() as u32;
-                let err = r_response.json::<In>()?;
+                let err = r_response.json::<In>().await?;
 
                 Err(VelocityError::APIError(VelocityAPIError {
                     code: status,
@@ -65,7 +66,7 @@ impl<'a> Velocity<'a> {
                 }))
             }
             _ => Err(VelocityError::APIError(
-                r_response.json::<VelocityAPIError>()?,
+                r_response.json::<VelocityAPIError>().await?,
             )),
         }
     }
@@ -75,7 +76,7 @@ impl<'a> Velocity<'a> {
     /// * `method` - The method to use for the request
     /// * `endpoint` - The endpoint to route the request to: e.g. `/u/auth`
     /// * `request` - The request structure to provide to the API
-    pub fn request<T: Serialize>(
+    pub async fn request<T: Serialize>(
         &self,
         method: reqwest::Method,
         endpoint: &str,
@@ -85,7 +86,8 @@ impl<'a> Velocity<'a> {
             .http_client
             .request(method, self.url(endpoint))
             .json(&request)
-            .send()?;
+            .send()
+            .await?;
 
         let status = r_response.status();
 
@@ -98,7 +100,7 @@ impl<'a> Velocity<'a> {
                 }
 
                 let status: u32 = r_response.status().as_u16() as u32;
-                let err = r_response.json::<In>()?;
+                let err = r_response.json::<In>().await?;
 
                 Err(VelocityError::APIError(VelocityAPIError {
                     code: status,
@@ -106,7 +108,7 @@ impl<'a> Velocity<'a> {
                 }))
             }
             _ => Err(VelocityError::APIError(
-                r_response.json::<VelocityAPIError>()?,
+                r_response.json::<VelocityAPIError>().await?,
             )),
         }
     }

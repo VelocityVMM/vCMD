@@ -23,7 +23,7 @@ pub use velocity::{authkey::*, *};
 #[derive(Debug)]
 pub struct Velocity<'a> {
     base_url: &'a str,
-    http_client: reqwest::blocking::Client,
+    http_client: reqwest::Client,
     authkey: Option<Authkey>,
 }
 
@@ -33,15 +33,19 @@ impl<'a> Velocity<'a> {
     /// * `base_url` - The base url to route all requests to
     /// * `username` - The username needed for authentication
     /// * `password` - The passwrod needed for authentication
-    pub fn new(base_url: &'a str, username: &str, password: &str) -> Result<Self, VelocityError> {
-        let http_client = reqwest::blocking::Client::new();
+    pub async fn new(
+        base_url: &str,
+        username: &str,
+        password: &str,
+    ) -> Result<Velocity, VelocityError> {
+        let http_client = reqwest::Client::new();
         let mut v = Velocity {
             base_url,
             http_client,
             authkey: Default::default(),
         };
 
-        v.authenticate(username, password)?;
+        v.authenticate(username, password).await?;
 
         Ok(v)
     }

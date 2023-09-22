@@ -10,14 +10,16 @@ impl<'a> Velocity<'a> {
     /// * `password` - The password for the user
     /// # Returns
     /// The key on success
-    pub fn authenticate(
+    pub async fn authenticate(
         &mut self,
         username: &str,
         password: &str,
     ) -> Result<Authkey, VelocityError> {
         let req = UAuthPOSTReq { username, password };
 
-        let res = self.request_json::<UAuthPOSTReq, UAuthPOSTRes>(Method::POST, "/u/auth", &req)?;
+        let res = self
+            .request_json::<UAuthPOSTReq, UAuthPOSTRes>(Method::POST, "/u/auth", &req)
+            .await?;
 
         let key = Authkey::new(&res.response.authkey, res.response.expires);
 
@@ -29,15 +31,16 @@ impl<'a> Velocity<'a> {
     /// Reauthenticates the current authkey
     /// # Returns
     /// The key on success
-    pub fn reauthenticate(&mut self) -> Result<Authkey, VelocityError> {
+    pub async fn reauthenticate(&mut self) -> Result<Authkey, VelocityError> {
         let authkey = self.get_authkey()?;
 
         let req = UAuthPATCHReq {
             authkey: authkey.key(),
         };
 
-        let res =
-            self.request_json::<UAuthPATCHReq, UAuthPATCHRes>(Method::PATCH, "/u/auth", &req)?;
+        let res = self
+            .request_json::<UAuthPATCHReq, UAuthPATCHRes>(Method::PATCH, "/u/auth", &req)
+            .await?;
 
         let key = Authkey::new(&res.response.authkey, res.response.expires);
 
@@ -47,14 +50,14 @@ impl<'a> Velocity<'a> {
     }
 
     /// Deauthenticates and drops the internal authkey
-    pub fn deauthenticate(&mut self) -> Result<(), VelocityError> {
+    pub async fn deauthenticate(&mut self) -> Result<(), VelocityError> {
         let authkey = self.get_authkey()?;
 
         let req = UAuthDELETEReq {
             authkey: authkey.key(),
         };
 
-        let res = self.request(Method::DELETE, "/u/auth", &req)?;
+        let res = self.request(Method::DELETE, "/u/auth", &req).await?;
 
         if res == StatusCode::OK {
             self.authkey = None
