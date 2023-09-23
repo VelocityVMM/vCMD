@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{error::VelocityError, Velocity};
 
-use super::{GID, PID, UID};
+use crate::{GID, PID, UID};
 
 impl Velocity {
     /// Creates a new user using the provided credentials

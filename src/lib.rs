@@ -20,6 +20,13 @@ pub use velocity::{authkey::*, *};
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
+#[allow(clippy::upper_case_acronyms)]
+pub type UID = i64;
+#[allow(clippy::upper_case_acronyms)]
+pub type GID = i64;
+#[allow(clippy::upper_case_acronyms)]
+pub type PID = i64;
+
 /// This struct is the main workhorse of this API client, all requests and functions go through
 /// this struct and its methods
 #[derive(Debug)]
