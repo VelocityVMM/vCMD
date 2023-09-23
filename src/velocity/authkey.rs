@@ -9,13 +9,17 @@ use crate::{
     Velocity,
 };
 
+use wasm_bindgen::prelude::wasm_bindgen;
+
 /// An authkey has a key value that authenticates and an expiration datetime
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
+#[wasm_bindgen]
 pub struct Authkey {
     /// The key string to authenticate to Velocity
-    pub key: String,
+    key: String,
     /// The UNIX timestamp of the expiration date
-    pub expires: SystemTime,
+    expires: SystemTime,
 }
 
 impl Authkey {
@@ -29,8 +33,19 @@ impl Authkey {
             expires: UNIX_EPOCH.add(Duration::from_secs(expires)),
         }
     }
+
+    /// Returns a `&str` to the key
+    pub fn key(&self) -> &str {
+        &self.key
+    }
+
+    /// Returns a reference to the expiration time
+    pub fn expires(&self) -> &SystemTime {
+        &self.expires
+    }
 }
 
+#[wasm_bindgen]
 impl Velocity {
     /// Tries to retrieve the authkey from this instance. If it doesn't exist, this will error
     /// with a `ClientError::NotAuthenticated`
