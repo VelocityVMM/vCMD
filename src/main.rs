@@ -2,6 +2,8 @@ use rustyline::DefaultEditor;
 use std::{error::Error, io::Write};
 use velocity::*;
 
+mod u;
+
 async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
     if args.len() != 3 {
         println!("Usage: {} <Velocity hypervisor URL> <username>", args[0]);
@@ -21,6 +23,7 @@ async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
     println!("Logged in as {}", args[2]);
 
     let mut cli = clik::CLI::new(velocity);
+    u::register_commands(&mut cli);
 
     println!("\n------ vCMD ------\n{}", cli);
 
