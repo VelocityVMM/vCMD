@@ -1,5 +1,6 @@
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 
 use crate::{error::VelocityError, Velocity};
 
@@ -88,6 +89,25 @@ pub struct UserInfo {
     pub uid: UID,
     pub name: String,
     pub memberships: Vec<Membership>,
+}
+
+impl Display for UserInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "Memberships for user '{}' ({})", self.name, self.uid)?;
+
+        for membership in &self.memberships {
+            writeln!(f, " - Group '{}' ({}):", membership.name, membership.gid)?;
+            for permission in &membership.permissions {
+                writeln!(
+                    f,
+                    "   |- Permission [{:<2}] '{}'",
+                    permission.pid, permission.name,
+                )?;
+            }
+        }
+
+        Ok(())
+    }
 }
 
 /// Describes a membership
