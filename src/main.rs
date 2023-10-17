@@ -1,5 +1,5 @@
 use rustyline::DefaultEditor;
-use std::{error::Error, io::Write};
+use std::{error::Error, io::Write, path::PathBuf};
 use velocity::*;
 
 mod create;
@@ -15,6 +15,14 @@ async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
 
     // Create a new rustyline editor for reading in history
     let mut readline = DefaultEditor::new()?;
+    let history_dir: PathBuf = match home::home_dir() {
+        Some(dir) => dir,
+        None => PathBuf::from("./"),
+    };
+    let history_path = history_dir.join(".vcmd_history");
+    if history_path.exists() {
+        readline.load_history(&history_path)?;
+    }
 
     // Read in the password
     print!("Password for {}: ", args[2]);
@@ -48,6 +56,8 @@ async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
             Err(_) => break,
         }
     }
+
+    readline.save_history(&history_path)?;
 
     Ok(())
 }
