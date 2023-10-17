@@ -2,6 +2,9 @@ use rustyline::DefaultEditor;
 use std::{error::Error, io::Write};
 use velocity::*;
 
+mod create;
+mod list;
+mod remove;
 mod u;
 
 async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
@@ -24,6 +27,9 @@ async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
 
     let mut cli = clik::CLI::new(velocity);
     u::register_commands(&mut cli);
+    create::register_commands(&mut cli);
+    remove::register_commands(&mut cli);
+    list::register_commands(&mut cli);
 
     println!("\n------ vCMD ------\n{}", cli);
 
