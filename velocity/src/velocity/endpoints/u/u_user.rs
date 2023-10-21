@@ -70,7 +70,7 @@ impl Velocity {
             authkey: authkey.key(),
         };
 
-        #[derive(Deserialize)]
+        #[derive(Deserialize, Debug)]
         struct Res {
             users: Vec<UUserListPOSTRes>,
         }

@@ -75,7 +75,7 @@ struct UAuthPOSTReq<'a> {
 }
 
 /// `/u/auth - PATCH` Response structure
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 struct UAuthPOSTRes {
     authkey: String,
     expires: u64,
@@ -94,7 +94,7 @@ struct UAuthPATCHReq<'a> {
 }
 
 /// `/u/auth - PATCH` Response structure
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 struct UAuthPATCHRes {
     authkey: String,
     expires: u64,

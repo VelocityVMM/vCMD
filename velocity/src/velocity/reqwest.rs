@@ -30,12 +30,16 @@ impl Velocity {
     /// * `request` - The request structure to provide to the API
     /// # Returns
     /// A `JSONResponse` struct containing the status code and the expected response structure
-    pub async fn request_json<REQUEST: Serialize, RESPONSE: DeserializeOwned>(
+    pub async fn request_json<REQUEST, RESPONSE>(
         &self,
         method: reqwest::Method,
         endpoint: &str,
         request: &REQUEST,
-    ) -> Result<JSONResponse<RESPONSE>, VelocityError> {
+    ) -> Result<JSONResponse<RESPONSE>, VelocityError>
+    where
+        REQUEST: Serialize,
+        RESPONSE: DeserializeOwned + std::fmt::Debug,
+    {
         let r_response = self
             .http_client
             .request(method, self.url(endpoint))
