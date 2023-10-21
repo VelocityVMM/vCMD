@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
@@ -92,6 +94,29 @@ pub struct GroupInfo {
     pub gid: GID,
     pub parent_gid: GID,
     pub memberships: Vec<GroupMembership>,
+}
+
+impl Display for GroupInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(
+            f,
+            "Memberships for group '{}' ({}, parent: {})",
+            self.name, self.gid, self.parent_gid
+        )?;
+
+        for membership in &self.memberships {
+            writeln!(f, " - User '{}' ({}):", membership.name, membership.uid)?;
+            for permission in &membership.permissions {
+                writeln!(
+                    f,
+                    "   |- Permission [{:<2}] '{}'",
+                    permission.pid, permission.name,
+                )?;
+            }
+        }
+
+        Ok(())
+    }
 }
 
 /// Describes a membership
