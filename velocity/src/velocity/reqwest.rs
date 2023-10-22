@@ -1,6 +1,6 @@
 //! Reqwest wrappers
 
-use reqwest::StatusCode;
+use reqwest::{RequestBuilder, StatusCode};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::{
@@ -19,33 +19,23 @@ pub struct JSONResponse<T: DeserializeOwned> {
 
 impl Velocity {
     /// Generates a full URL from the internal base url and the endpoint
-    fn url(&self, endpoint: &str) -> String {
+    pub fn url(&self, endpoint: &str) -> String {
         format!("{}/{}", self.base_url, endpoint)
     }
 
-    /// Executes a request to the remote API and expects a JSON response
+    /// Execute a raw request, expecting a JSON response
     /// # Arguments
-    /// * `method` - The method to use for the request
-    /// * `endpoint` - The endpoint to route the request to: e.g. `/u/auth`
-    /// * `request` - The request structure to provide to the API
+    /// * `request` - The built request to send
     /// # Returns
     /// A `JSONResponse` struct containing the status code and the expected response structure
-    pub async fn request_json<REQUEST, RESPONSE>(
+    pub async fn request_json_raw<RESPONSE>(
         &self,
-        method: reqwest::Method,
-        endpoint: &str,
-        request: &REQUEST,
+        request: RequestBuilder,
     ) -> Result<JSONResponse<RESPONSE>, VelocityError>
     where
-        REQUEST: Serialize,
         RESPONSE: DeserializeOwned + std::fmt::Debug,
     {
-        let r_response = self
-            .http_client
-            .request(method, self.url(endpoint))
-            .json(&request)
-            .send()
-            .await?;
+        let r_response = request.send().await?;
 
         let status = r_response.status();
 
@@ -75,23 +65,11 @@ impl Velocity {
         }
     }
 
-    /// Executes a request to the remote API without any body
+    /// Execute a raw request expecting no body
     /// # Arguments
-    /// * `method` - The method to use for the request
-    /// * `endpoint` - The endpoint to route the request to: e.g. `/u/auth`
-    /// * `request` - The request structure to provide to the API
-    pub async fn request<T: Serialize>(
-        &self,
-        method: reqwest::Method,
-        endpoint: &str,
-        request: &T,
-    ) -> Result<StatusCode, VelocityError> {
-        let r_response = self
-            .http_client
-            .request(method, self.url(endpoint))
-            .json(&request)
-            .send()
-            .await?;
+    /// * `request` - The built request to send
+    pub async fn request_raw(&self, request: RequestBuilder) -> Result<StatusCode, VelocityError> {
+        let r_response = request.send().await?;
 
         let status = r_response.status();
 
@@ -115,5 +93,49 @@ impl Velocity {
                 r_response.json::<VelocityAPIError>().await?,
             )),
         }
+    }
+
+    /// Executes a request to the remote API and expects a JSON response
+    /// # Arguments
+    /// * `method` - The method to use for the request
+    /// * `endpoint` - The endpoint to route the request to: e.g. `/u/auth`
+    /// * `request` - The request structure to provide to the API
+    /// # Returns
+    /// A `JSONResponse` struct containing the status code and the expected response structure
+    pub async fn request_json<REQUEST, RESPONSE>(
+        &self,
+        method: reqwest::Method,
+        endpoint: &str,
+        request: &REQUEST,
+    ) -> Result<JSONResponse<RESPONSE>, VelocityError>
+    where
+        REQUEST: Serialize,
+        RESPONSE: DeserializeOwned + std::fmt::Debug,
+    {
+        let request = self
+            .http_client
+            .request(method, self.url(endpoint))
+            .json(&request);
+
+        self.request_json_raw(request).await
+    }
+
+    /// Executes a request to the remote API expecting no body
+    /// # Arguments
+    /// * `method` - The method to use for the request
+    /// * `endpoint` - The endpoint to route the request to: e.g. `/u/auth`
+    /// * `request` - The request structure to provide to the API
+    pub async fn request<T: Serialize>(
+        &self,
+        method: reqwest::Method,
+        endpoint: &str,
+        request: &T,
+    ) -> Result<StatusCode, VelocityError> {
+        let request = self
+            .http_client
+            .request(method, self.url(endpoint))
+            .json(&request);
+
+        self.request_raw(request).await
     }
 }
