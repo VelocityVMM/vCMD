@@ -5,6 +5,7 @@ pub fn register_commands(cli: &mut CLI<Velocity>) {
     let mut remove = remove();
     remove.add_subcommand(user());
     remove.add_subcommand(group());
+    remove.add_subcommand(media());
     cli.add_command(remove);
 }
 
@@ -24,6 +25,15 @@ async fn group(state: &mut Velocity, gid: GID) {
     state.group_remove(gid).await?;
 
     println!("Removed group with GID = {gid}");
+
+    Ok(())
+}
+
+#[clik_command(media, "Remove a piece of media")]
+async fn media(state: &mut Velocity, mid: MID) {
+    state.media_remove(mid.clone()).await?;
+
+    println!("Removed media with MID = {mid}");
 
     Ok(())
 }

@@ -4,10 +4,12 @@ use velocity::*;
 pub fn register_commands(cli: &mut CLI<Velocity>) {
     let mut assign = assign();
     assign.add_subcommand(assign_user());
+    assign.add_subcommand(assign_pool());
     cli.add_command(assign);
 
     let mut revoke = revoke();
     revoke.add_subcommand(revoke_user());
+    revoke.add_subcommand(revoke_pool());
     cli.add_command(revoke);
 }
 
@@ -26,6 +28,25 @@ async fn assign_user(state: &mut Velocity, gid: GID, uid: UID, permission: Strin
     Ok(())
 }
 
+#[clik_command(pool, "Assign a pool to a group")]
+async fn assign_pool(
+    state: &mut Velocity,
+    mpid: MPID,
+    gid: GID,
+    quota: u64,
+    write: bool,
+    manage: bool,
+) {
+    state.pool_assign(gid, mpid, quota, write, manage).await?;
+
+    println!(
+        "Assigned pool {} to group {}: write: {}, manage: {}",
+        mpid, gid, write, manage
+    );
+
+    Ok(())
+}
+
 #[clik_command(user, "Revoke a users permission on a group")]
 #[clik_arg(gid, "The GID of the group to revoke from")]
 #[clik_arg(uid, "The UID of the user to revoke from")]
@@ -37,6 +58,15 @@ async fn revoke_user(state: &mut Velocity, gid: GID, uid: UID, permission: Strin
         "Revoked permission '{}' from user {} on group {}",
         permission, uid, gid
     );
+
+    Ok(())
+}
+
+#[clik_command(pool, "Revoke a pool from a group")]
+async fn revoke_pool(state: &mut Velocity, mpid: MPID, gid: GID) {
+    state.pool_revoke(gid, mpid).await?;
+
+    println!("Revoked pool {} from group {}", mpid, gid);
 
     Ok(())
 }

@@ -5,6 +5,7 @@ pub fn register_commands(cli: &mut CLI<Velocity>) {
     let mut create = create();
     create.add_subcommand(create_user());
     create.add_subcommand(create_group());
+    create.add_subcommand(create_media());
     cli.add_command(create);
 }
 
@@ -27,6 +28,22 @@ async fn create_group(state: &mut Velocity, name: String, parent_gid: GID) {
     let group = state.group_create(parent_gid, &name).await?;
 
     println!("Created new group '{name}': GID = {}", group.gid);
+
+    Ok(())
+}
+
+#[clik_command(media, "Allocate new media")]
+async fn create_media(
+    state: &mut Velocity,
+    mpid: MPID,
+    gid: GID,
+    name: String,
+    ty: String,
+    size: u64,
+) {
+    let mid = state.media_allocate(mpid, gid, &name, &ty, size).await?.mid;
+
+    println!("Created new media '{name}' in pool {mpid}. MID: {mid}");
 
     Ok(())
 }

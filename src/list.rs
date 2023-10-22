@@ -5,6 +5,8 @@ pub fn register_commands(cli: &mut CLI<Velocity>) {
     let mut list = list();
     list.add_subcommand(users());
     list.add_subcommand(groups());
+    list.add_subcommand(pools());
+    list.add_subcommand(media());
     cli.add_command(list);
 }
 
@@ -27,6 +29,36 @@ async fn groups(state: &mut Velocity) {
     println!("Available groups:");
     for group in groups {
         println!(" - '{}' ({})", group.name, group.gid);
+    }
+
+    Ok(())
+}
+
+#[clik_command(pools, "List all available pools for a group")]
+async fn pools(state: &mut Velocity, gid: GID) {
+    let pools = state.pool_list(gid).await?;
+
+    println!("Pools available to group {}:", gid);
+    for pool in pools {
+        println!(
+            " - [{:>2}] '{}' (write: {}, manage: {})",
+            pool.mpid, pool.name, pool.write, pool.manage
+        );
+    }
+
+    Ok(())
+}
+
+#[clik_command(media, "List all available media for a group")]
+async fn media(state: &mut Velocity, gid: GID) {
+    let media = state.media_list(gid).await?;
+
+    println!("Media available to group {}:", gid);
+    for media in media {
+        println!(
+            " - {} in pool [{:>2}] (readonly: {:>5}) => '{}'",
+            media.mid, media.mpid, media.readonly, media.name
+        );
     }
 
     Ok(())

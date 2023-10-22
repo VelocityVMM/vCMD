@@ -8,6 +8,7 @@ mod list;
 mod permissions;
 mod remove;
 mod u;
+mod upload;
 
 async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
     if args.len() != 3 {
@@ -41,6 +42,7 @@ async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
     remove::register_commands(&mut cli);
     list::register_commands(&mut cli);
     assign::register_commands(&mut cli);
+    upload::register_commands(&mut cli);
 
     println!("\n------ vCMD ------\n{}", cli);
 
