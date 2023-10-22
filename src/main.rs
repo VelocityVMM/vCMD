@@ -5,7 +5,6 @@ use velocity::*;
 mod assign;
 mod create;
 mod list;
-mod permissions;
 mod remove;
 mod u;
 mod upload;
