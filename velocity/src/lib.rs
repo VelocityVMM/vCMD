@@ -30,6 +30,8 @@ pub type PID = i64;
 pub type MPID = i64;
 #[allow(clippy::upper_case_acronyms)]
 pub type MID = String;
+#[allow(clippy::upper_case_acronyms)]
+pub type NICID = i64;
 
 /// This struct is the main workhorse of this API client, all requests and functions go through
 /// this struct and its methods
