@@ -7,6 +7,7 @@ pub fn register_commands(cli: &mut CLI<Velocity>) {
     list.add_subcommand(groups());
     list.add_subcommand(pools());
     list.add_subcommand(media());
+    list.add_subcommand(nics());
     cli.add_command(list);
 }
 
@@ -59,6 +60,21 @@ async fn media(state: &mut Velocity, gid: GID) {
         println!(
             " - {} in pool [{:>2}] (readonly: {:>5}) => '{}'",
             media.mid, media.mpid, media.readonly, media.name
+        );
+    }
+
+    Ok(())
+}
+
+#[clik_command(nics, "List all available host NICs")]
+async fn nics(state: &mut Velocity) {
+    let nics = state.nic_list().await?;
+
+    println!("Available host NICs:");
+    for nic in nics {
+        println!(
+            " - [{:>2}] '{}' - identifier: '{}'",
+            nic.nicid, nic.description, nic.identifier
         );
     }
 
