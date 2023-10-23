@@ -30,6 +30,7 @@ async fn group(state: &mut Velocity, gid: GID) {
 }
 
 #[clik_command(media, "Remove a piece of media")]
+#[clik_arg(mid, "The media id of the piece of media to remove")]
 async fn media(state: &mut Velocity, mid: MID) {
     state.media_remove(mid.clone()).await?;
 

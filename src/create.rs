@@ -33,6 +33,14 @@ async fn create_group(state: &mut Velocity, name: String, parent_gid: GID) {
 }
 
 #[clik_command(media, "Allocate new media")]
+#[clik_arg(mpid, "The media pool id to allocate in")]
+#[clik_arg(gid, "The group id of the group the media should belong to")]
+#[clik_arg(name, "A user-friendly name for the new media")]
+#[clik_arg(
+    ty,
+    "A string describing the type of media this is - see the Velocity API documentation"
+)]
+#[clik_arg(size, "The size of the new media")]
 async fn create_media(
     state: &mut Velocity,
     mpid: MPID,

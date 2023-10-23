@@ -35,6 +35,7 @@ async fn groups(state: &mut Velocity) {
 }
 
 #[clik_command(pools, "List all available pools for a group")]
+#[clik_arg(gid, "The group id of the group to list available pools of")]
 async fn pools(state: &mut Velocity, gid: GID) {
     let pools = state.pool_list(gid).await?;
 

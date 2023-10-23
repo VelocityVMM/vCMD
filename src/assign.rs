@@ -29,6 +29,14 @@ async fn assign_user(state: &mut Velocity, gid: GID, uid: UID, permission: Strin
 }
 
 #[clik_command(pool, "Assign a pool to a group")]
+#[clik_arg(mpid, "The media pool id of the pool to assign")]
+#[clik_arg(gid, "The group id of the group to assign to")]
+#[clik_arg(
+    quota,
+    "The quota of available space the group should have in the pool"
+)]
+#[clik_arg(write, "If the group can write to media in the pool")]
+#[clik_arg(manage, "If the group can create and remove media in the pool")]
 async fn assign_pool(
     state: &mut Velocity,
     mpid: MPID,
@@ -63,6 +71,8 @@ async fn revoke_user(state: &mut Velocity, gid: GID, uid: UID, permission: Strin
 }
 
 #[clik_command(pool, "Revoke a pool from a group")]
+#[clik_arg(mpid, "The media pool id of the pool to revoke")]
+#[clik_arg(gid, "The group id of the group to revoke the pool from")]
 async fn revoke_pool(state: &mut Velocity, mpid: MPID, gid: GID) {
     state.pool_revoke(gid, mpid).await?;
 
