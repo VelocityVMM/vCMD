@@ -1,11 +1,19 @@
 use clik::*;
+use rustyline::DefaultEditor;
 use velocity::*;
 
+use crate::wizard::wizard_corevm;
+
 pub fn register_commands(cli: &mut CLI<Velocity>) {
+    let mut create_vm = create_vm();
+    create_vm.add_subcommand(create_vm_efi());
+
     let mut create = create();
+    create.add_subcommand(create_vm);
     create.add_subcommand(create_user());
     create.add_subcommand(create_group());
     create.add_subcommand(create_media());
+
     cli.add_command(create);
 }
 
@@ -53,6 +61,32 @@ async fn create_media(
 
     println!("Created new media '{name}' in pool {mpid}. MID: {mid}");
 
+    Ok(())
+}
+
+#[clik_command(efi, "Create a new EFI virtual machine")]
+#[clik_arg(gid, "The group if of the group the virtual machine belongs to")]
+#[clik_arg(name, "The name for the virtual machine")]
+async fn create_vm_efi(state: &mut Velocity, gid: GID, name: String) {
+    let config = velocity::endpoints::v::v_vm_efi::EFIVMConfig {
+        rosetta: true,
+
+        core: wizard_corevm(
+            &mut DefaultEditor::new().expect("Create wizard Editor"),
+            gid,
+            &name,
+        )?,
+    };
+
+    let vmid = state.vm_efi_create(config).await?;
+
+    println!("New VM: {vmid}");
+
+    Ok(())
+}
+
+#[clik_command(vm, "Create a new virtual machine")]
+async fn create_vm(state: &mut Velocity) {
     Ok(())
 }
 
