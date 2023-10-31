@@ -8,6 +8,7 @@ mod list;
 mod remove;
 mod u;
 mod upload;
+mod wizard;
 
 async fn run(args: &Vec<String>) -> Result<(), Box<dyn Error>> {
     if args.len() != 3 {
