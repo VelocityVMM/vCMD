@@ -16,7 +16,7 @@ pub fn wizard_corevm<'a, H: Helper, I: History>(
     name: &'a str,
 ) -> Result<CoreVM<'a>, ReadlineError> {
     let cpus = readline.readline_t("CPU count > ")?;
-    let memory = readline.readline_t("Memory in MiB > ")?;
+    let memory_mib = readline.readline_t("Memory in MiB > ")?;
 
     let displays = wizard_displays(readline)?;
     let disks = wizard_disks(readline)?;
@@ -28,7 +28,7 @@ pub fn wizard_corevm<'a, H: Helper, I: History>(
         name,
         gid,
         cpus,
-        memory,
+        memory_mib,
         displays,
         disks,
         nics,

@@ -16,8 +16,8 @@ pub struct CoreVM<'a> {
 
     /// The amount of CPUs the virtual machine should be allowed to use
     pub cpus: u32,
-    /// The amount of memory
-    pub memory: u64,
+    /// The amount of memory in MiB
+    pub memory_mib: u64,
 
     pub displays: Vec<DisplayConfig>,
     pub disks: Vec<DiskConfig>,
